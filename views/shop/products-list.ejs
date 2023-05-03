@@ -17,14 +17,14 @@
         <div class="card-info">
         <p class="text-title"><%= products[i].title %></p>
         <p class="text-body"><%= products[i].description.slice(0,50) %></p>
-        <a href="/products/<%=i%>">..Read more</a
+        <a href="/products/<%=products[i].id%>">..Read more</a
         </div>
 
     </div>
     <div class="card-footer">
       <span class="text-title"><%= products[i].price %> $</span>
       <div class="card-button"> 
-        <a href="/add-to-cart/<%=i%>"><i class="fa-solid fa-cart-shopping"></i>
+        <a href="/add-to-cart/<%=products[i].id%>"><i class="fa-solid fa-cart-shopping"></i>
         </a>
      </div>
     </div>
