@@ -1,0 +1,37 @@
+<%- include('../partials/head') %> 
+<link rel="stylesheet" href="/css/card.css" />
+
+</head>
+<%- include('../partials/navigation') %>
+
+<main>
+  <h2><%= pageTitle%></h2>
+  <ul class="products-container">
+    <% if(products.length > 0){ %> 
+      <% for(let i=0;i<products.length;i++ ){ %>
+      <li>
+      <div class="card">
+        <div class="card-img">
+        <img src="<%= products[i].imageUrl %>" alt="<%= products[i].title %>" />
+        </div>
+        <div class="card-info">
+        <p class="text-title"><%= products[i].title %></p>
+        <p class="text-body"><%= products[i].description.slice(0,50) %></p>
+        <a href="/products/<%=i%>">..Read more</a
+        </div>
+
+    </div>
+    <div class="card-footer">
+      <span class="text-title"><%= products[i].price %> $</span>
+      <div class="card-button"> 
+        <a href="/add-to-cart/<%=i%>"><i class="fa-solid fa-cart-shopping"></i>
+        </a>
+     </div>
+    </div>
+    </li>
+    <% } %> <% }else{ %>
+    <li>No products found</li>
+    <% } %>
+  </ul>
+</main>
+<%- include('../partials/footer') %>

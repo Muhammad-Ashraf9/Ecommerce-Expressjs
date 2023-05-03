@@ -5,22 +5,20 @@ const path = require("path");
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const { get404 } = require("./controllers/error");
 
 const app = express();
 
 app.set("view engine", "ejs");
-// app.set("view", "views"); // default
+app.set("views", "views"); // default
 
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/admin", adminRoutes.router);
+app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
-app.use((req, res) => {
-  // res.status(404).sendFile(path.join(__dirname, "views", "404.html"));
-  res.status(404).render("404", { pageTitle: "Page Not Found" });
-});
+app.use(get404);
 
 app.listen(3000, () => {
   console.log("server on 3000");

@@ -1,0 +1,30 @@
+<%- include('../partials/head') %> 
+<link rel="stylesheet" href="/css/card.css" />
+<link rel="stylesheet" href="/css/details.css" />
+
+</head>
+<%- include('../partials/navigation') %>
+
+<main>
+  <h2><%= pageTitle%></h2>
+  <div class="details-container">
+    <div class="details-img">
+      <img src="<%= product.imageUrl %>" alt="<%= product.title %>" />
+    </div>
+    <div class="details-info">
+      <h3 class="text-title"><%= product.title %></h3>
+      <h5 class="price"><%= product.price %> $</h5>
+
+      <p class="text-body"><%= product.description %></p>
+      <div class="details-footer">
+        <div class="card-button"> 
+           <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+    </div>
+      
+
+      </div> 
+  </div>
+
+</main>
+<%- include('../partials/footer') %>
