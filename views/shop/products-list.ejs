@@ -23,10 +23,8 @@
     </div>
     <div class="card-footer">
       <span class="text-title"><%= products[i].price %> $</span>
-      <div class="card-button"> 
-        <a href="/add-to-cart/<%=products[i].id%>"><i class="fa-solid fa-cart-shopping"></i>
-        </a>
-     </div>
+      <%- include('../partials/add-to-cart',{product:products[i]}) %>
+
     </div>
     </li>
     <% } %> <% }else{ %>

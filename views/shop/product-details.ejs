@@ -17,10 +17,7 @@
 
       <p class="text-body"><%= product.description %></p>
       <div class="details-footer">
-        <div class="card-button"> 
-          <a href="/add-to-cart/<%=product.id%>"><i class="fa-solid fa-cart-shopping"></i>
-          </a>
-        </div>
+        <%- include('../partials/add-to-cart') %>
     </div>
       
 
