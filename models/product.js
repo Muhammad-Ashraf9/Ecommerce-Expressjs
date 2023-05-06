@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const Cart = require("./cart");
 
 const p = path.join(
   path.dirname(require.main.filename),
@@ -9,29 +10,58 @@ const p = path.join(
 
 const getProductsFromFile = (callback) => {
   fs.readFile(p, (err, fileContent) => {
-    if (err) {
-      callback([]);
-    } else {
-      callback(JSON.parse(fileContent));
+    let products = [];
+    if (!err) {
+      products = JSON.parse(fileContent);
     }
+    callback(products);
   });
 };
 
 module.exports = class Product {
-  constructor(title, description, price, imageUrl) {  
+  constructor(id, title, description, price, imageUrl) {
+    this.id = id;
     this.title = title;
     this.description = description;
-    this.price = price; 
+    this.price = price;
     this.imageUrl = imageUrl;
   }
   save() {
-    this.id = Math.random().toString();
     getProductsFromFile((products) => {
-      products.push(this);
-      fs.writeFile(p, JSON.stringify(products), (err) => {
-        console.log(err);
+      if (this.id) {
+        const existingProductIndex = products.findIndex(
+          (product) => product.id === this.id
+        );
+        const updatedProducts = [...products];
+        updatedProducts[existingProductIndex] = this;
+        fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      } else {
+        this.id = Math.random().toString();
+        products.push(this);
+        fs.writeFile(p, JSON.stringify(products), (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+    });
+  }
+  static deleteById(id) {
+    getProductsFromFile((products) => {
+      const updatedProducts = products.filter((product) => product.id !== id);
+      fs.writeFile(p, JSON.stringify(updatedProducts), (err) => {
+        if (err) {
+          console.log(err);
+        }
       });
     });
+    // this.findById(id, (product) => {
+    //   Cart.deleteProduct(id, product.price);
+    // });
   }
   static fetchAll(callback) {
     getProductsFromFile(callback);

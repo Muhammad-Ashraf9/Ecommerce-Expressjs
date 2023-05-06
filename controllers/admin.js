@@ -2,18 +2,19 @@ const Product = require("../models/product");
 
 exports.getAddProduct = (req, res, next) => {
   // res.sendFile(path.join(__dirname, "../", "views", "add-product.html"));
-  res.render("admin/add-product", {
+  res.render("admin/edit-product", {
     pageTitle: "Add Product",
     path: "/admin/add-product",
+    editProduct: false,
   });
 };
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title;
   const description = req.body.description;
   const imageUrl = req.body.imageUrl;
-  const price =Number( req.body.price);
+  const price = Number(req.body.price);
 
-  const product = new Product(title, description, price, imageUrl);
+  const product = new Product(null, title, description, price, imageUrl);
   product.save();
   res.redirect("/");
 };
@@ -27,11 +28,35 @@ exports.getAdminProducts = (req, res) => {
   });
 };
 exports.getEditProduct = (req, res) => {
-  Product.fetchAll((products) => {
+  const isEditProduct = req.query.edit;
+  const productId = req.params.productId;
+  Product.findById(productId, (product) => {
     res.render("admin/edit-product", {
-      pageTitle: "Admin Edit Products",
+      pageTitle: "Edit Product",
       path: "/admin/edit-product",
-      products: products,
+      editProduct: isEditProduct,
+      product: product,
     });
   });
+};
+exports.postEditProduct = (req, res) => {
+  const productId = req.body.productId;
+  const title = req.body.title;
+  const description = req.body.description;
+  const imageUrl = req.body.imageUrl;
+  const price = Number(req.body.price);
+  const updatedProduct = new Product(
+    productId,
+    title,
+    description,
+    imageUrl,
+    price
+  );
+  updatedProduct.save();
+  res.redirect("/admin/products");
+};
+exports.postDeleteProduct = (req, res) => {
+  const productId = req.body.productId;
+  Product.deleteById(productId);
+  res.redirect("/admin/products");
 };

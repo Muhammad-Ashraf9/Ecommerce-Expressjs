@@ -1,14 +1,36 @@
 
 <%- include('../partials/head') %>  
 <link rel="stylesheet" href="/css/products.css" />
+<link rel="stylesheet" href="/css/form.css" />
 
 </head>
 
 
 <%- include('../partials/navigation') %>  
     <main>
-    <h1><%=pageTitle %></h1>
+      <form action="/admin/<%= editProduct === "true" ? "edit-product" : "add-product" %>" method="POST">
+       <div class="form-group">
+        <label for="title">Title:</label>
+        <input type="text" name="title" id="title" value="<%= editProduct === "true" ? product.title : " " %>" />
+       </div>
+       <div class="form-group">
+        <label for="imageUrl">ImageUrl:</label>
+        <input type="text" name="imageUrl" id="imageUrl" value="<%= editProduct === "true" ? product.imageUrl : " " %>"  />
+       </div>
+       <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="number" name="price" id="price" value="<%= editProduct === "true" ? product.price : " " %>" />
+       </div>
+       <div class="form-group">
+        <label for="description">Description:</label>
+        <textarea type="text" name="description" id="description" rows="5"  ><%= editProduct === "true" ? product.description : " " %></textarea>
+       </div>
+      <% if (editProduct=== "true") { %>
+        <input type="hidden" name="productId" value="<%=product.id%>" >
+      <% } %>
+        <button type="submit"><%=pageTitle %></button>
+      </form>
     </main>
-<%- include('../partials/footer') %>  
+    <%- include('../partials/footer') %>  
 
 

@@ -22,7 +22,22 @@ exports.getProducts = (req, res, next) => {
 };
 
 exports.getCart = (req, res) => {
-  res.render("shop/cart", { path: "/cart", pageTitle: "cart Page" });
+  // Cart.fetchAll((cartProducts) => {
+  //   const fullCartProducts = [];
+  //   for (let cartProduct of cartProducts.products) {
+  //     Product.findById(cartProduct.id, (fullProduct) => {
+  //       let updatedProduct = { ...fullProduct, quantity: cartProduct.quantity };
+  //       fullCartProducts.push(updatedProduct);
+  //     });
+  //     console.log(fullCartProducts);
+  //   }
+  // });
+  res.render("shop/cart", {
+    path: "/cart",
+    pageTitle: "cart Page",
+    totalPrice: [],
+    products: [],
+  });
 };
 exports.postCart = (req, res) => {
   const productId = req.body.productId;

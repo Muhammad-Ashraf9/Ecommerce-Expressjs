@@ -12,24 +12,28 @@
     <h1><%=pageTitle %></h1>
     <ul class="products-container">
         <% if(products.length > 0){ %> 
-          <% for(let i=0;i<products.length;i++ ){ %>
+          <% for(let product of products){ %>
           <li>
           <div class="card">
             <div class="card-img">
-            <img src="<%= products[i].imageUrl %>" alt="<%= products[i].title %>" />
+            <img src="<%= product.imageUrl %>" alt="<%= product.title %>" />
              </div>
             <div class="card-info">
-            <p class="text-title"><%= products[i].title %></p>
-            <p class="text-body"><%= products[i].description.slice(0,100) %></p>
+            <p class="text-title"><%= product.title %></p>
+            <p class="text-body"><%= product.description.slice(0,100) %></p>
              </div>
     
                 <div class="card-footer">
-                 <span class="text-title"><%= products[i].price %> $</span>
+                 <span class="text-title"><%= product.price %> $</span>
                  <div class="card-button"> 
-                    <a href="/admin/edit-product/<%=i%>">Edit</a> 
+                    <a href="/admin/edit-product/<%=product.id%>?edit=true">Edit</a> 
                   </div>  
                     <form action="/admin/delete-product" method="post">
+                      
                     <button type="submit" class="card-button">Delete</button>
+                    <input type="hidden" name="productId" value="<%= product.id %>">
+
+                    
                     </form> 
                 </div>
             </div>
