@@ -1,8 +1,11 @@
 <header>
   <nav>
-    <a class="nav-logo" href="/">
-      <i class="fa-brands fa-shopify fa-2xl"></i> shopy</a
-    >
+    <div class="nav-logo">
+      <a class="nav-logo" href="/">
+        <i class="fa-brands fa-shopify fa-2xl"></i
+      ></a>
+      <span class="nav-logo-subtitle">shopy</span>
+    </div>
 
     <ul class="nav-container">
       <li class="nav-item">
@@ -14,7 +17,9 @@
         <a class="<%= path === '/cart' ? 'active' :''%>" href="/cart">cart</a>
       </li>
       <li class="nav-item">
-        <a class="<%= path === '/orders' ? 'active' :''%>" href="/orders">orders</a>
+        <a class="<%= path === '/orders' ? 'active' :''%>" href="/orders"
+          >orders</a
+        >
       </li>
       <li class="nav-item">
         <a
