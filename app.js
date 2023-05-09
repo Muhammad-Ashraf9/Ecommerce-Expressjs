@@ -3,9 +3,12 @@ const bodyparser = require("body-parser");
 
 const path = require("path");
 
+const db = require("./util/database");
+
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const { get404 } = require("./controllers/error");
+const { log, error } = require("console");
 
 const app = express();
 

@@ -15,8 +15,14 @@ exports.postAddProduct = (req, res, next) => {
   const price = Number(req.body.price);
 
   const product = new Product(null, title, description, price, imageUrl);
-  product.save();
-  res.redirect("/");
+  product
+    .save()
+    .then(() => {
+      res.redirect("/");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 };
 exports.getAdminProducts = (req, res) => {
   Product.fetchAll((products) => {
