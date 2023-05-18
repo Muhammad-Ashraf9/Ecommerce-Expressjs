@@ -1,5 +1,6 @@
 <%- include('../partials/head') %> 
 <link rel="stylesheet" href="/css/card.css" />
+<link rel="stylesheet" href="/css/cart.css" />
 
 </head>
 <%- include('../partials/navigation') %>
@@ -8,18 +9,23 @@
   <h2><%= pageTitle%></h2>
   <% if (products.length > 0) { %>
     <ul>
-        <% products.forEach(p => { %>
-            <li>
-                <p><%= p.productData.title %> (<%= p.qty %>)</p>
+        <% products.forEach(product => { %>
+            <li class="cart-item">
+                <p><%= product.title %> </p>
+                <span><%= product.cartItem.quantity %></span>
                 <form action="/cart-delete-item" method="POST">
-                    <input type="hidden" value="<%= p.productData.id %>" name="productId">
-                    <button class="btn" type="submit">Delete</button>
+                    <input type="hidden" value="<%= product.id %>" name="productId">
+                    <button class="delete-button" type="submit">Delete</button>
                 </form>
             </li>
         <% }) %>
     </ul>
+    <form action="/create-order" class="checkout" method="POST">
+        <button class="card-button" type="submit">Checkout</button>
+    </form>
 <% } else { %>
     <h1>No Products in Cart!</h1>
 <% } %>
+
 </main>
 <%- include('../partials/footer') %>
