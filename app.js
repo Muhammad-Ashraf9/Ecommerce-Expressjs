@@ -71,7 +71,7 @@ app.use((req, res, next) => {
     });
 });
 app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.logedin;
+  res.locals.isAuthenticated = req.session.isLogedIn;
   res.locals.CSRFToken = req.csrfToken();
   next();
 });

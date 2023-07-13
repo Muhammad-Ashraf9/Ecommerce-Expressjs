@@ -1,4 +1,5 @@
-<% if (isAuthenticated) { %>
+<% console.log('isAuthenticated :>> ', isAuthenticated); %> <%
+console.log('CSRFToken :>> ', CSRFToken); %> <% if(isAuthenticated) { %>
 
 <form action="/cart" method="post">
   <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />

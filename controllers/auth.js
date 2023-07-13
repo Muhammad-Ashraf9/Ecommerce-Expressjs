@@ -134,7 +134,7 @@ exports.postLogin = (req, res) => {
         }
         if (doMatch) {
           req.session.user = user;
-          req.session.isLogedin = true;
+          req.session.isLogedIn = true;
           req.session.save(() => {
             return res.redirect("/");
           });

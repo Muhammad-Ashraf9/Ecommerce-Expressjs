@@ -1,6 +1,5 @@
-exports.isAuthenticated = (req, res, next) => {
-  console.log(req.session.isLogedin);
-  if (!req.session.isLogedin) {
+exports.isAuth = (req, res, next) => {
+  if (!req.session.isLogedIn) {
     res.redirect("/login");
   }
   next();

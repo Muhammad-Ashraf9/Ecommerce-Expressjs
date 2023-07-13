@@ -11,25 +11,25 @@ const {
   postDeleteProduct,
 } = require("../controllers/admin");
 
-const { isAuthenticated } = require("../middleware/isAuth");
+const { isAuth } = require("../middleware/isAuth");
 
 const router = express.Router();
 
 // //    /admin/add-product get
 
-router.get("/add-product", isAuthenticated, getAddProduct);
+router.get("/add-product", isAuth, getAddProduct);
 
 // //    /admin/add-product post
-router.post("/add-product", isAuthenticated, postAddProduct);
+router.post("/add-product", isAuth, postAddProduct);
 
 // //    /admin/products get
-router.get("/products", isAuthenticated, getAdminProducts);
+router.get("/products", isAuth, getAdminProducts);
 
 // //    /admin/edit-product get
-router.get("/edit-product/:productId", isAuthenticated, getEditProduct);
+router.get("/edit-product/:productId", isAuth, getEditProduct);
 
-router.post("/edit-product", isAuthenticated, postEditProduct);
+router.post("/edit-product", isAuth, postEditProduct);
 
-router.post("/delete-product", isAuthenticated, postDeleteProduct);
+router.post("/delete-product", isAuth, postDeleteProduct);
 
 module.exports = router;

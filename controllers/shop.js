@@ -9,7 +9,6 @@ exports.getIndex = (req, res) => {
         pageTitle: "Main Page",
         products: products,
         path: "/",
-        isAuthenticated: req.session.isLogedin,
       });
     })
     .catch((err) => {
@@ -23,7 +22,6 @@ exports.getProducts = (req, res) => {
         pageTitle: "Main Page",
         products: products,
         path: "/",
-        isAuthenticated: req.session.isLogedin,
       });
     })
     .catch((err) => {
@@ -40,7 +38,6 @@ exports.getCart = (req, res) => {
         path: "/cart",
         pageTitle: "Your Cart",
         products: user.cart.items,
-        isAuthenticated: req.session.isLogedin,
       });
     })
     .catch((err) => {
@@ -96,7 +93,6 @@ exports.getOrders = (req, res) => {
         path: "/orders",
         pageTitle: "orders Page",
         orders: orders,
-        isAuthenticated: req.session.isLogedin,
       });
     })
     .catch((err) => {
@@ -112,7 +108,6 @@ exports.getProductDetails = (req, res) => {
         path: "/products",
         pageTitle: product.title,
         product: product,
-        isAuthenticated: req.session.isLogedin,
       });
     })
     .catch((err) => {
