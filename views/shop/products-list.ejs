@@ -17,13 +17,14 @@
         <div class="card-info">
         <p class="text-title"><%= products[i].title %></p>
         <p class="text-body"><%= products[i].description.slice(0,50) %></p>
-        <a href="/products/<%=products[i].id%>">..Read more</a
+        <a href="/products/<%=products[i]._id%>">..Read more</a
         </div>
 
     </div>
     <div class="card-footer">
       <span class="text-title"><%= products[i].price %> $</span>
-      <%- include('../partials/add-to-cart',{product:products[i]}) %>
+     
+        <%- include('../partials/add-to-cart',{product:products[i]}) %>
 
     </div>
     </li>

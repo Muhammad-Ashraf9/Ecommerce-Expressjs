@@ -9,7 +9,9 @@
 <%- include('../partials/navigation') %>  
     <main>
       <form action="/admin/<%= editProduct === "true" ? "edit-product" : "add-product" %>" method="POST">
-       <div class="form-group">
+        <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />
+
+        <div class="form-group">
         <label for="title">Title:</label>
         <input type="text" name="title" id="title" value="<%= editProduct === "true" ? product.title : " " %>" />
        </div>
@@ -26,7 +28,7 @@
         <textarea type="text" name="description" id="description" rows="5"  ><%= editProduct === "true" ? product.description : " " %></textarea>
        </div>
       <% if (editProduct=== "true") { %>
-        <input type="hidden" name="productId" value="<%=product.id%>" >
+        <input type="hidden" name="productId" value="<%=product._id%>" >
       <% } %>
         <button type="submit"><%=pageTitle %></button>
       </form>

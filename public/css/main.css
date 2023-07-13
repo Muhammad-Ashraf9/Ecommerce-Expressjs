@@ -28,7 +28,7 @@ main {
 nav {
   background-color: #116c7e;
   display: flex;
-  padding: 3% 15%;
+  padding: 2% 5%;
   justify-content: space-between;
   align-items: center;
   text-align: center;
@@ -127,4 +127,39 @@ footer p {
   footer p {
     font-size: 0.8rem;
   }
+}
+
+.btn:link,
+.btn:visited {
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  display: inline-block;
+  border-radius: 1rem;
+  transition: all 0.2s;
+  position: relative;
+  font-size: 1.3rem;
+}
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 1rem 2rem rgba(rgb(255, 255, 255), 0.2);
+}
+
+.btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 1rem rgba(black, 0.2);
+}
+.btn-white {
+  background-color: rgb(58, 29, 56);
+}
+.message {
+  padding: 1rem 2rem;
+  width: 30%;
+  margin: 0 auto;
+  border-radius: 1rem;
+}
+.message--error {
+  background-color: #9f5151;
+  border: 1px solid #ff5959;
+  color: #7c0000;
 }

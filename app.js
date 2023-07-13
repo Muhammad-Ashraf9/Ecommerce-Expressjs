@@ -1,19 +1,25 @@
-const express = require("express");
-const bodyparser = require("body-parser");
-
 const path = require("path");
 
-const sequelize = require("./util/database");
-const Product = require("./models/product");
-const User = require("./models/user");
-const Cart = require("./models/cart");
-const CartItem = require("./models/cart-item");
-const Order = require("./models/order");
-const OrderItem = require("./models/order-item");
+const express = require("express");
+const bodyparser = require("body-parser");
+const mongoose = require("mongoose");
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
+const flash = require("connect-flash");
+const { csrfSync } = require("csrf-sync");
+const { csrfSynchronisedProtection } = csrfSync({
+  getTokenFromRequest: (req) => {
+    return req.body["CSRFToken"];
+  },
+});
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
+const authRoutes = require("./routes/auth");
 const { get404 } = require("./controllers/error");
+const User = require("./models/user");
+
+require("dotenv").config();
 
 const app = express();
 
@@ -22,8 +28,40 @@ app.set("views", "views"); // default
 
 app.use(bodyparser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: { maxAge: 36000000 },
+    store: MongoStore.create({
+      mongoUrl: process.env.CONNECTION_URL,
+      collectionName: "sessions",
+    }),
+  })
+);
+app.use(csrfSynchronisedProtection);
+app.use(flash());
+
+mongoose
+  .connect(process.env.CONNECTION_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    app.listen(3000, () => {
+      console.log("server on 3000");
+    });
+  })
+  .catch((err) => {
+    console.log(err);
+  });
+
 app.use((req, res, next) => {
-  User.findByPk(1)
+  if (!req.session.user) {
+    return next();
+  }
+  User.findById(req.session.user._id)
     .then((user) => {
       req.user = user;
       next();
@@ -32,42 +70,13 @@ app.use((req, res, next) => {
       console.log(err);
     });
 });
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.logedin;
+  res.locals.CSRFToken = req.csrfToken();
+  next();
+});
 
 app.use("/admin", adminRoutes);
+app.use(authRoutes);
 app.use(shopRoutes);
-
 app.use(get404);
-
-User.hasMany(Product);
-Product.belongsTo(User, { constraints: true, onDelete: "CASCADE" });
-User.hasOne(Cart);
-Cart.belongsToMany(Product, { through: CartItem });
-Product.belongsToMany(Cart, { through: CartItem });
-User.hasMany(Order);
-Order.belongsTo(User);
-
-Order.belongsToMany(Product, { through: OrderItem });
-Product.belongsToMany(Order, { through: OrderItem });
-
-sequelize
-  .sync()
-  .then((result) => {
-    return User.findByPk(1);
-  })
-  .then((user) => {
-    if (!user) {
-      return User.create({ userName: "Ash", email: "ash@gmail.com" });
-    }
-    return Promise.resolve(user);
-  })
-  .then((user) => {
-    app.listen(3000, () => {
-      console.log("server on 3000");
-    });
-    // return user.createCart();
-  })
-  // .then((cart) => {
-  // })
-  .catch((err) => {
-    console.log(err);
-  });

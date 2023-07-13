@@ -13,6 +13,8 @@
           >Products</a
         >
       </li>
+      <% if (isAuthenticated) { %>
+
       <li class="nav-item">
         <a class="<%= path === '/cart' ? 'active' :''%>" href="/cart">cart</a>
       </li>
@@ -35,6 +37,30 @@
           >Admin products</a
         >
       </li>
+      <% } %> <% if (!isAuthenticated) { %>
+      <li class="nav-item">
+        <a
+          class="btn btn-white <%= path === '/login' ? 'active' :''%>"
+          href="/login"
+          >Login</a
+        >
+      </li>
+      <li class="nav-item">
+        <a
+          class="btn btn-white <%= path === '/signup' ? 'active' :''%>"
+          href="/signup"
+          >Sign up</a
+        >
+      </li>
+      <% }else{ %>
+      <li class="nav-item">
+        <form action="/logout" method="post">
+          <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />
+          <button type="submit">Logout</button>
+        </form>
+      </li>
+
+      <% } %>
     </ul>
   </nav>
 </header>
