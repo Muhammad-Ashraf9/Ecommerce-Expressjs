@@ -24,7 +24,6 @@ exports.postAddProduct = (req, res, next) => {
   product
     .save()
     .then((result) => {
-      console.log(result);
       res.redirect("/admin/products");
     })
     .catch((err) => {
@@ -32,9 +31,7 @@ exports.postAddProduct = (req, res, next) => {
     });
 };
 exports.getAdminProducts = (req, res) => {
-  console.log(req.session.logedin);
-
-  Product.find({ userId: req.session.user._id })
+  Product.find({ userId: req.user._id })
     // .select("title price -_id")
     // .populate("userId")
     .then((products) => {
@@ -50,12 +47,15 @@ exports.getAdminProducts = (req, res) => {
 };
 exports.getEditProduct = (req, res) => {
   const isEditProduct = req.query.edit;
+  const productId = req.params.productId;
   if (!isEditProduct) {
     res.redirect("/");
   }
-  const productId = req.params.productId;
   Product.findById(productId)
     .then((product) => {
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
       res.render("admin/edit-product", {
         pageTitle: "Edit Product",
         path: "/admin/edit-product",
@@ -73,20 +73,8 @@ exports.postEditProduct = (req, res) => {
   const description = req.body.description;
   const imageUrl = req.body.imageUrl;
   const price = Number(req.body.price);
-  // Product.findById(productId).then((product) => {
-  //   product.title = title;
-  //   product.description = description;
-  //   product.imageUrl = imageUrl;
-  //   product.price = price;
-  //   return product.save();
-  // });
-  // then(() => {
-  //   res.redirect("/admin/products");
-  // }).catch((err) => {
-  //   console.log(err);
-  // });
   Product.findOneAndUpdate(
-    { _id: productId },
+    { _id: productId, userId: req.session.user._id },
     {
       title: title,
       description: description,
@@ -105,8 +93,7 @@ exports.postEditProduct = (req, res) => {
 };
 exports.postDeleteProduct = (req, res) => {
   const productId = req.body.productId;
-  console.log(productId);
-  Product.findByIdAndDelete(productId)
+  Product.findOneAndDelete({ _id: productId, userId: req.session.user._id })
     .then(() => {
       res.redirect("/admin/products");
     })
