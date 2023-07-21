@@ -44,10 +44,7 @@ app.use(csrfSynchronisedProtection);
 app.use(flash());
 
 mongoose
-  .connect(process.env.CONNECTION_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.CONNECTION_URL)
   .then(() => {
     app.listen(3000, () => {
       console.log("server on 3000");

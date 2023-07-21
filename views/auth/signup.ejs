@@ -14,7 +14,7 @@
          <p><%= message %></p> 
         </div>
       <% } %>
-      <form action="/signup" method="POST">
+      <form action="/signup" method="POST" novalidate>
         <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />
 
        <div class="form-group">

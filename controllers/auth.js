@@ -2,6 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
+const { validationResult } = require("express-validator");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
@@ -149,33 +150,31 @@ exports.postLogin = (req, res) => {
     });
 };
 exports.postSignup = (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  User.findOne({ email: email })
-    .then((user) => {
-      if (user) {
-        req.flash("error", "There is an account with this email.");
-        return res.redirect("/signup");
+  const { email, password, confirmPassword } = req.body;
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    bcrypt.hash(password, 12, async (err, hashedPassword) => {
+      if (err) {
+        console.log(err);
       }
-      bcrypt.hash(password, 12, (err, hashedPassword) => {
-        if (err) {
-          console.log(err);
-        }
-        const newUser = new User({ email: email, password: hashedPassword });
-        return newUser.save().then(() => {
-          res.redirect("/login");
-          return transporter.sendMail({
-            from: process.env.SENDER_EMAIL,
-            to: email,
-            subject: "Welcome to our Shop",
-            html: `<b>Welcome</b>`,
-          });
-        });
-      });
-    })
-    .catch((err) => {
-      console.log(err);
+      const newUser = new User({ email: email, password: hashedPassword });
+      await newUser.save();
+      res.redirect("/login");
+      // return transporter.sendMail({
+      //   from: process.env.SENDER_EMAIL,
+      //   to: email,
+      //   subject: "Welcome to our Shop",
+      //   html: `<b>Welcome</b>`,
+      // });
     });
+  } else {
+    console.log(" result.array() :>> ", result.array());
+    res.render("auth/signup", {
+      pageTitle: "signup",
+      path: "signup",
+      message: result.array()[0].msg,
+    });
+  }
 };
 exports.postLogout = (req, res) => {
   req.session.destroy((err) => {
@@ -184,4 +183,14 @@ exports.postLogout = (req, res) => {
     }
     res.redirect("/login");
   });
+};
+exports.checkEmailNotInUse = async (email) => {
+  const user = await User.findOne({ email: email });
+  console.log(user);
+  if (user) {
+    throw new Error("A user already exists with this e-mail address");
+  }
+};
+exports.checkConfirmPasswordMatch = (confirmPassword, { req }) => {
+  return confirmPassword === req.body.password;
 };
