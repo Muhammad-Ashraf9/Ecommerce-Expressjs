@@ -13,6 +13,16 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+//get
+exports.getsignup = (req, res) => {
+  res.render("auth/signup", {
+    pageTitle: "signup",
+    path: "signup",
+    message: req.flash("error"),
+    oldData: { email: "", password: "", confirmPassword: "" },
+  });
+};
+
 exports.getLogin = (req, res) => {
   res.render("auth/login", {
     pageTitle: "Login",
@@ -28,14 +38,7 @@ exports.getResetPassword = (req, res) => {
     message: req.flash("error"),
   });
 };
-exports.getsignup = (req, res) => {
-  res.render("auth/signup", {
-    pageTitle: "signup",
-    path: "signup",
-    message: req.flash("error"),
-    oldData: { email: "", password: "", confirmPassword: "" },
-  });
-};
+
 exports.getNewPassword = (req, res) => {
   const resetToken = req.params.resetToken;
   User.findOne({ resetToken: resetToken, resetExpiration: { $gt: new Date() } })
@@ -57,6 +60,60 @@ exports.getNewPassword = (req, res) => {
       console.log(err);
     });
 };
+
+//post
+exports.postSignup = (req, res) => {
+  const { email, password } = req.body;
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    bcrypt.hash(password, 12, async (err, hashedPassword) => {
+      if (err) {
+        console.log(err);
+      }
+      const newUser = new User({ email: email, password: hashedPassword });
+      await newUser.save();
+      res.redirect("/login");
+      // return transporter.sendMail({
+      //   from: process.env.SENDER_EMAIL,
+      //   to: email,
+      //   subject: "Welcome to our Shop",
+      //   html: `<b>Welcome</b>`,
+      // });
+    });
+  } else {
+    console.log(" result.array() :>> ", result.array());
+    res.render("auth/signup", {
+      pageTitle: "signup",
+      path: "signup",
+      message: result.array()[0],
+      oldData: req.body,
+    });
+  }
+};
+
+exports.postLogin = (req, res) => {
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    res.redirect("/");
+  } else {
+    res.render("auth/login", {
+      pageTitle: "login",
+      path: "login",
+      message: result.array()[0],
+      oldData: req.body,
+    });
+  }
+};
+
+exports.postLogout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.log(err);
+    }
+    res.redirect("/login");
+  });
+};
+
 exports.postResetPassword = (req, res) => {
   const email = req.body.email;
   let resetToken;
@@ -93,6 +150,7 @@ exports.postResetPassword = (req, res) => {
       console.log(err);
     });
 };
+
 exports.postNewPassword = (req, res) => {
   const password = req.body.password;
   const userId = req.body.userId;
@@ -121,55 +179,6 @@ exports.postNewPassword = (req, res) => {
     .catch((err) => {
       console.log(err);
     });
-};
-exports.postLogin = (req, res) => {
-  const result = validationResult(req);
-  if (result.isEmpty()) {
-    res.redirect("/");
-  } else {
-    res.render("auth/login", {
-      pageTitle: "login",
-      path: "login",
-      message: result.array()[0],
-      oldData: req.body,
-    });
-  }
-};
-exports.postSignup = (req, res) => {
-  const { email, password } = req.body;
-  const result = validationResult(req);
-  if (result.isEmpty()) {
-    bcrypt.hash(password, 12, async (err, hashedPassword) => {
-      if (err) {
-        console.log(err);
-      }
-      const newUser = new User({ email: email, password: hashedPassword });
-      await newUser.save();
-      res.redirect("/login");
-      // return transporter.sendMail({
-      //   from: process.env.SENDER_EMAIL,
-      //   to: email,
-      //   subject: "Welcome to our Shop",
-      //   html: `<b>Welcome</b>`,
-      // });
-    });
-  } else {
-    console.log(" result.array() :>> ", result.array());
-    res.render("auth/signup", {
-      pageTitle: "signup",
-      path: "signup",
-      message: result.array()[0],
-      oldData: req.body,
-    });
-  }
-};
-exports.postLogout = (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      console.log(err);
-    }
-    res.redirect("/login");
-  });
 };
 
 //vaildations

@@ -15,12 +15,13 @@ const { isAuth } = require("../middleware/isAuth");
 const router = express.Router();
 const editAddProductValidation = () => [
   body("title")
-    .isString()
-    .notEmpty()
-    .withMessage("should be string and at least 5 characters."),
-  body("imageUrl").isURL().withMessage("Not a valid URL"),
-  body("price").isNumeric(),
-  body("description").isLength({ min: 40, max: 400 }),
+    .isLength({ min: 5 })
+    .withMessage("Title length should be  at least 5."),
+  body("imageUrl").isURL().withMessage("Image URL not a valid URL"),
+  body("price").isNumeric().withMessage("Price should be valid number"),
+  body("description")
+    .isLength({ min: 10, max: 100 })
+    .withMessage("Description length should be between 10 and 100."),
 ];
 
 // //    /admin/add-product get
@@ -32,12 +33,13 @@ router.post(
   "/add-product",
   [
     body("title")
-      .isString()
-      .notEmpty()
-      .withMessage("should be string and at least 5 characters."),
-    body("imageUrl").isURL().withMessage("Not a valid URL"),
-    body("price").isNumeric(),
-    body("description").isLength({ min: 40, max: 400 }),
+      .isLength({ min: 5 })
+      .withMessage("Title length should be  at least 5."),
+    body("imageUrl").isURL().withMessage("Image URL not a valid URL"),
+    body("price").isNumeric().withMessage("Price should be valid number"),
+    body("description")
+      .isLength({ min: 10, max: 100 })
+      .withMessage("Description length should be between 10 and 100."),
   ],
   isAuth,
   postAddProduct

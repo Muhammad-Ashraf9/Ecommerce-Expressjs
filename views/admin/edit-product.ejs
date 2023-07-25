@@ -8,24 +8,30 @@
 
 <%- include('../partials/navigation') %>  
     <main>
-      <form action="/admin/<%= editProduct === "true" ? "edit-product" : "add-product" %>" method="POST">
+      <%=console.log(errors);%>
+      <% if (errors.length>0) { %>
+        <div class="message message--error">
+         <p><%= errors[0].msg %></p> 
+        </div>
+      <% } %>
+      <form action="/admin/<%= editProduct === "true"  ? "edit-product" : "add-product" %>" method="POST">
         <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />
 
         <div class="form-group">
         <label for="title">Title:</label>
-        <input type="text" name="title" id="title" value="<%= editProduct === "true" ? product.title : " " %>" />
+        <input type="text" name="title" id="title" value="<%= editProduct === "true" ||product ? product.title : " " %>" />
        </div>
        <div class="form-group">
         <label for="imageUrl">ImageUrl:</label>
-        <input type="text" name="imageUrl" id="imageUrl" value="<%= editProduct === "true" ? product.imageUrl : " " %>"  />
+        <input type="text" name="imageUrl" id="imageUrl" value="<%= editProduct === "true" ||product? product.imageUrl : " " %>"  />
        </div>
        <div class="form-group">
         <label for="price">Price:</label>
-        <input type="number" name="price" step="0.01" id="price" value="<%= editProduct === "true" ? product.price : " " %>" />
+        <input type="number" name="price" step="0.01" id="price" value="<%= editProduct === "true" ||product? product.price : " " %>" />
        </div>
        <div class="form-group">
         <label for="description">Description:</label>
-        <textarea type="text" name="description" id="description" rows="5"  ><%= editProduct === "true" ? product.description : " " %></textarea>
+        <textarea type="text" name="description" id="description" rows="5"  ><%= editProduct === "true" ||product? product.description : " " %></textarea>
        </div>
       <% if (editProduct=== "true") { %>
         <input type="hidden" name="productId" value="<%=product._id%>" >

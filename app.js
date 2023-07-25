@@ -16,7 +16,7 @@ const { csrfSynchronisedProtection } = csrfSync({
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
-const { get404 } = require("./controllers/error");
+const { get404, get500 } = require("./controllers/error");
 const User = require("./models/user");
 
 require("dotenv").config();
@@ -74,7 +74,11 @@ app.use((req, res, next) => {
 });
 
 app.use("/admin", adminRoutes);
+
 app.use(authRoutes);
+
 app.use(shopRoutes);
+
 app.use(get404);
-app.use(get404);
+
+app.use(get500);
