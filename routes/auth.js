@@ -15,17 +15,30 @@ const {
   getNewPassword,
   checkEmailNotInUse,
   checkConfirmPasswordMatch,
+  checkEmailNotFound,
+  checkPasswordWrong,
 } = require("../controllers/auth");
 
-const baseEmailChain = () => body("email").trim().isEmail();
-const basePasswordChain = () => body("password").isLength({ min: 6 });
-
-const passwordLength = 6;
+const baseEmailChain = () =>
+  body("email").trim().isEmail().withMessage("Wrong E-mail.");
+const basePasswordChain = () =>
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage(`Password should be more than 6.`);
 
 const router = express.Router();
 
 router.get("/login", getLogin);
-router.post("/login", postLogin);
+router.post(
+  "/login",
+  [
+    baseEmailChain().custom(checkEmailNotFound),
+    basePasswordChain()
+      .custom(checkPasswordWrong)
+      .withMessage("Wrong password."),
+  ],
+  postLogin
+);
 
 router.get("/signup", getsignup);
 router.post(
@@ -37,8 +50,8 @@ router.post(
       .withMessage("Wrong E-mail.")
       .custom(checkEmailNotInUse),
     body("password")
-      .isLength({ min: passwordLength })
-      .withMessage(`Password should be more than ${passwordLength}.`),
+      .isLength({ min: 6 })
+      .withMessage(`Password should be more than 6.`),
     body("confirmPassword")
       .custom(checkConfirmPasswordMatch)
       .withMessage("Password doesn't match."),

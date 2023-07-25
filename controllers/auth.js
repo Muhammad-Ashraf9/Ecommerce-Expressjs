@@ -2,7 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const crypto = require("crypto");
-const { validationResult } = require("express-validator");
+const { validationResult, matchedData } = require("express-validator");
 require("dotenv").config();
 
 const transporter = nodemailer.createTransport({
@@ -17,7 +17,8 @@ exports.getLogin = (req, res) => {
   res.render("auth/login", {
     pageTitle: "Login",
     path: "login",
-    message: req.flash("error"),
+    message: "",
+    oldData: { email: "", password: "" },
   });
 };
 exports.getResetPassword = (req, res) => {
@@ -32,6 +33,7 @@ exports.getsignup = (req, res) => {
     pageTitle: "signup",
     path: "signup",
     message: req.flash("error"),
+    oldData: { email: "", password: "", confirmPassword: "" },
   });
 };
 exports.getNewPassword = (req, res) => {
@@ -121,36 +123,20 @@ exports.postNewPassword = (req, res) => {
     });
 };
 exports.postLogin = (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  User.findOne({ email: email })
-    .then((user) => {
-      if (!user) {
-        req.flash("error", "There is no account with this email.");
-        return res.redirect("/login");
-      }
-      bcrypt.compare(password, user.password, (err, doMatch) => {
-        if (err) {
-          console.log(err);
-        }
-        if (doMatch) {
-          req.session.user = user;
-          req.session.isLogedIn = true;
-          req.session.save(() => {
-            return res.redirect("/");
-          });
-        } else {
-          req.flash("error", "Wrong password.");
-          res.redirect("/login");
-        }
-      });
-    })
-    .catch((err) => {
-      console.log(err);
+  const result = validationResult(req);
+  if (result.isEmpty()) {
+    res.redirect("/");
+  } else {
+    res.render("auth/login", {
+      pageTitle: "login",
+      path: "login",
+      message: result.array()[0],
+      oldData: req.body,
     });
+  }
 };
 exports.postSignup = (req, res) => {
-  const { email, password, confirmPassword } = req.body;
+  const { email, password } = req.body;
   const result = validationResult(req);
   if (result.isEmpty()) {
     bcrypt.hash(password, 12, async (err, hashedPassword) => {
@@ -172,7 +158,8 @@ exports.postSignup = (req, res) => {
     res.render("auth/signup", {
       pageTitle: "signup",
       path: "signup",
-      message: result.array()[0].msg,
+      message: result.array()[0],
+      oldData: req.body,
     });
   }
 };
@@ -184,13 +171,44 @@ exports.postLogout = (req, res) => {
     res.redirect("/login");
   });
 };
+
+//vaildations
+
+/**
+ * signup
+ */
 exports.checkEmailNotInUse = async (email) => {
   const user = await User.findOne({ email: email });
   console.log(user);
   if (user) {
-    throw new Error("A user already exists with this e-mail address");
+    throw new Error("An account already exists with this E-mail.");
   }
 };
+
 exports.checkConfirmPasswordMatch = (confirmPassword, { req }) => {
   return confirmPassword === req.body.password;
+};
+
+/**
+ * login
+ */
+exports.checkEmailNotFound = async (email, { req }) => {
+  const user = await User.findOne({ email: email });
+  console.log(user);
+  if (!user) {
+    throw new Error("No account with this E-mail.");
+  } else {
+    req.user = user;
+  }
+};
+exports.checkPasswordWrong = async (password, { req }) => {
+  console.log("req.user>>>>>", req.user);
+  const doMatch = await bcrypt.compare(password, req.user.password);
+  if (!doMatch) {
+    throw new Error("Wrong password.");
+  } else {
+    req.session.user = req.user;
+    req.session.isLogedIn = true;
+    req.session.save();
+  }
 };

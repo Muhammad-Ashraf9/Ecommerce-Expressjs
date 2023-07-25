@@ -77,3 +77,4 @@ app.use("/admin", adminRoutes);
 app.use(authRoutes);
 app.use(shopRoutes);
 app.use(get404);
+app.use(get404);
