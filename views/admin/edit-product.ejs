@@ -8,7 +8,6 @@
 
 <%- include('../partials/navigation') %>  
     <main>
-      <%=console.log(errors);%>
       <% if (errors.length>0) { %>
         <div class="message message--error">
          <p><%= errors[0].msg %></p> 
@@ -19,22 +18,39 @@
 
         <div class="form-group">
         <label for="title">Title:</label>
-        <input type="text" name="title" id="title" value="<%= editProduct === "true" ||product ? product.title : " " %>" />
+        <input type="text" name="title" id="title"
+         value="<%= editProduct === "true" || 
+         product ? product.title : " " %>"
+       class="<%=errors.some(err=>err.path ==="title") ?"invalid":""  %>"
+        />
        </div>
        <div class="form-group">
         <label for="imageUrl">ImageUrl:</label>
-        <input type="text" name="imageUrl" id="imageUrl" value="<%= editProduct === "true" ||product? product.imageUrl : " " %>"  />
+        <input type="text" name="imageUrl" id="imageUrl" 
+        value="<%= editProduct === "true" || 
+        product ? product.imageUrl : " " %>" 
+       class="<%=errors.some(err=>err.path ==="imageUrl") ?"invalid":""  %>"
+        />
        </div>
        <div class="form-group">
         <label for="price">Price:</label>
-        <input type="number" name="price" step="0.01" id="price" value="<%= editProduct === "true" ||product? product.price : " " %>" />
+        <input type="number" name="price" step="0.01" id="price" 
+        value="<%= editProduct === "true" ||
+        product? product.price : " " %>"
+      class="<%=errors.some(err=>err.path ==="price") ?"invalid":""  %>"
+      />
        </div>
        <div class="form-group">
         <label for="description">Description:</label>
-        <textarea type="text" name="description" id="description" rows="5"  ><%= editProduct === "true" ||product? product.description : " " %></textarea>
-       </div>
+        <textarea type="text" name="description" 
+        id="description" rows="5" 
+        class="<%=errors.some(err=>err.path ==="description") ?"invalid":""  %>"
+        ><%= editProduct === "true" ||
+        product? product.description : " " %></textarea>
+      </div>
       <% if (editProduct=== "true") { %>
-        <input type="hidden" name="productId" value="<%=product._id%>" >
+        <input type="hidden" name="productId" 
+        value="<%=product._id%>" >
       <% } %>
         <button type="submit"><%=pageTitle %></button>
       </form>

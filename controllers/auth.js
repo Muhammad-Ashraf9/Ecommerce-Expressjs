@@ -14,8 +14,8 @@ const transporter = nodemailer.createTransport({
 });
 
 //get
-exports.getsignup = (req, res) => {
-  res.render("auth/signup", {
+exports.getsignup = (req, res, next) => {
+  res.status(201).render("auth/signup", {
     pageTitle: "signup",
     path: "signup",
     message: req.flash("error"),
@@ -23,23 +23,23 @@ exports.getsignup = (req, res) => {
   });
 };
 
-exports.getLogin = (req, res) => {
-  res.render("auth/login", {
+exports.getLogin = (req, res, next) => {
+  res.status(201).render("auth/login", {
     pageTitle: "Login",
     path: "login",
     message: "",
     oldData: { email: "", password: "" },
   });
 };
-exports.getResetPassword = (req, res) => {
-  res.render("auth/reset-password", {
+exports.getResetPassword = (req, res, next) => {
+  res.status(201).render("auth/reset-password", {
     pageTitle: "Reset Password",
     path: "/reset-password",
     message: req.flash("error"),
   });
 };
 
-exports.getNewPassword = (req, res) => {
+exports.getNewPassword = (req, res, next) => {
   const resetToken = req.params.resetToken;
   User.findOne({ resetToken: resetToken, resetExpiration: { $gt: new Date() } })
     .then((user) => {
@@ -48,7 +48,7 @@ exports.getNewPassword = (req, res) => {
         return res.redirect("/reset-password");
       }
 
-      res.render("auth/new-password", {
+      res.status(201).render("auth/new-password", {
         pageTitle: "Confirm Password",
         path: "/new-password",
         message: req.flash("error"),
@@ -57,18 +57,18 @@ exports.getNewPassword = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 
 //post
-exports.postSignup = (req, res) => {
+exports.postSignup = (req, res, next) => {
   const { email, password } = req.body;
   const result = validationResult(req);
   if (result.isEmpty()) {
     bcrypt.hash(password, 12, async (err, hashedPassword) => {
       if (err) {
-        console.log(err);
+        next(err);
       }
       const newUser = new User({ email: email, password: hashedPassword });
       await newUser.save();
@@ -82,7 +82,7 @@ exports.postSignup = (req, res) => {
     });
   } else {
     console.log(" result.array() :>> ", result.array());
-    res.render("auth/signup", {
+    res.status(403).render("auth/signup", {
       pageTitle: "signup",
       path: "signup",
       message: result.array()[0],
@@ -91,12 +91,12 @@ exports.postSignup = (req, res) => {
   }
 };
 
-exports.postLogin = (req, res) => {
+exports.postLogin = (req, res, next) => {
   const result = validationResult(req);
   if (result.isEmpty()) {
     res.redirect("/");
   } else {
-    res.render("auth/login", {
+    res.status(403).render("auth/login", {
       pageTitle: "login",
       path: "login",
       message: result.array()[0],
@@ -105,16 +105,16 @@ exports.postLogin = (req, res) => {
   }
 };
 
-exports.postLogout = (req, res) => {
+exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) {
-      console.log(err);
+      next(err);
     }
     res.redirect("/login");
   });
 };
 
-exports.postResetPassword = (req, res) => {
+exports.postResetPassword = (req, res, next) => {
   const email = req.body.email;
   let resetToken;
 
@@ -126,7 +126,7 @@ exports.postResetPassword = (req, res) => {
       }
       crypto.randomBytes(32, (err, buffer) => {
         if (err) {
-          console.log(err);
+          next(err);
           return res.redirect("/reset-password");
         }
         resetToken = buffer.toString("hex");
@@ -147,11 +147,11 @@ exports.postResetPassword = (req, res) => {
       });
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 
-exports.postNewPassword = (req, res) => {
+exports.postNewPassword = (req, res, next) => {
   const password = req.body.password;
   const userId = req.body.userId;
   const resetToken = req.body.resetToken;
@@ -177,7 +177,7 @@ exports.postNewPassword = (req, res) => {
       res.redirect("/login");
     })
     .catch((err) => {
-      console.log(err);
+      next(err);
     });
 };
 

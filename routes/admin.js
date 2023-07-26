@@ -15,11 +15,13 @@ const { isAuth } = require("../middleware/isAuth");
 const router = express.Router();
 const editAddProductValidation = () => [
   body("title")
+    .trim()
     .isLength({ min: 5 })
     .withMessage("Title length should be  at least 5."),
-  body("imageUrl").isURL().withMessage("Image URL not a valid URL"),
+  body("imageUrl").trim().isURL().withMessage("Image URL not a valid URL"),
   body("price").isNumeric().withMessage("Price should be valid number"),
   body("description")
+    .trim()
     .isLength({ min: 10, max: 100 })
     .withMessage("Description length should be between 10 and 100."),
 ];
@@ -29,21 +31,7 @@ const editAddProductValidation = () => [
 router.get("/add-product", isAuth, getAddProduct);
 
 // //    /admin/add-product post
-router.post(
-  "/add-product",
-  [
-    body("title")
-      .isLength({ min: 5 })
-      .withMessage("Title length should be  at least 5."),
-    body("imageUrl").isURL().withMessage("Image URL not a valid URL"),
-    body("price").isNumeric().withMessage("Price should be valid number"),
-    body("description")
-      .isLength({ min: 10, max: 100 })
-      .withMessage("Description length should be between 10 and 100."),
-  ],
-  isAuth,
-  postAddProduct
-);
+router.post("/add-product", editAddProductValidation(), isAuth, postAddProduct);
 
 // //    /admin/products get
 router.get("/products", isAuth, getAdminProducts);
