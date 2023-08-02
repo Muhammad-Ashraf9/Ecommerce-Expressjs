@@ -7,6 +7,29 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const { csrfSync } = require("csrf-sync");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join("public", "images"));
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + "-" + file.originalname);
+  },
+});
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
+
 const { csrfSynchronisedProtection } = csrfSync({
   getTokenFromRequest: (req) => {
     return req.body["CSRFToken"];
@@ -26,7 +49,8 @@ const app = express();
 app.set("view engine", "ejs");
 app.set("views", "views"); // default
 
-app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser.urlencoded({ extended: false }));
+app.use(multer({ storage: storage, fileFilter: fileFilter }).single("image"));
 app.use(express.static(path.join(__dirname, "public")));
 app.use(
   session({
@@ -43,16 +67,11 @@ app.use(
 app.use(csrfSynchronisedProtection);
 app.use(flash());
 
-mongoose
-  .connect(process.env.CONNECTION_URL)
-  .then(() => {
-    app.listen(3000, () => {
-      console.log("server on 3000");
-    });
-  })
-  .catch((err) => {
-    next(err);
-  });
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLogedIn;
+  res.locals.CSRFToken = req.csrfToken();
+  next();
+});
 
 app.use((req, res, next) => {
   if (!req.session.user) {
@@ -69,11 +88,6 @@ app.use((req, res, next) => {
       next(err);
     });
 });
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.session.isLogedIn;
-  res.locals.CSRFToken = req.csrfToken();
-  next();
-});
 
 app.use("/admin", adminRoutes);
 
@@ -84,3 +98,14 @@ app.use(shopRoutes);
 app.use(get404);
 
 app.use(get500);
+
+mongoose
+  .connect(process.env.CONNECTION_URL)
+  .then(() => {
+    app.listen(3000, () => {
+      console.log("server on 3000");
+    });
+  })
+  .catch((err) => {
+    next(err);
+  });

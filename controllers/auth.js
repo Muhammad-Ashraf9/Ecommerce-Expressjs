@@ -81,7 +81,6 @@ exports.postSignup = (req, res, next) => {
       // });
     });
   } else {
-    console.log(" result.array() :>> ", result.array());
     res.status(403).render("auth/signup", {
       pageTitle: "signup",
       path: "signup",
@@ -188,7 +187,6 @@ exports.postNewPassword = (req, res, next) => {
  */
 exports.checkEmailNotInUse = async (email) => {
   const user = await User.findOne({ email: email });
-  console.log(user);
   if (user) {
     throw new Error("An account already exists with this E-mail.");
   }
@@ -203,7 +201,6 @@ exports.checkConfirmPasswordMatch = (confirmPassword, { req }) => {
  */
 exports.checkEmailNotFound = async (email, { req }) => {
   const user = await User.findOne({ email: email });
-  console.log(user);
   if (!user) {
     throw new Error("No account with this E-mail.");
   } else {
@@ -211,7 +208,6 @@ exports.checkEmailNotFound = async (email, { req }) => {
   }
 };
 exports.checkPasswordWrong = async (password, { req }) => {
-  console.log("req.user>>>>>", req.user);
   const doMatch = await bcrypt.compare(password, req.user.password);
   if (!doMatch) {
     throw new Error("Wrong password.");

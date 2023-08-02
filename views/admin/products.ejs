@@ -16,7 +16,8 @@
           <li>
           <div class="card">
             <div class="card-img">
-            <img src="<%= product.imageUrl %>" alt="<%= product.title %>" />
+              <!-- slice to remove puplic from url as it is static folder -->
+            <img src="<%= product.imageUrl.slice(6) %>" alt="<%= product.title %>" />
              </div>
             <div class="card-info">
             <p class="text-title"><%= product.title %></p>

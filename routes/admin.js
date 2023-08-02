@@ -1,6 +1,5 @@
 const express = require("express");
 const { body } = require("express-validator");
-
 const {
   getAddProduct,
   postAddProduct,
@@ -18,7 +17,6 @@ const editAddProductValidation = () => [
     .trim()
     .isLength({ min: 5 })
     .withMessage("Title length should be  at least 5."),
-  body("imageUrl").trim().isURL().withMessage("Image URL not a valid URL"),
   body("price").isNumeric().withMessage("Price should be valid number"),
   body("description")
     .trim()
