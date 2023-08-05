@@ -35,9 +35,9 @@
     <% if (currentPage > 1 ) { %>
      
       <li class="page">
-        <p class="page__prev">
-        &lrarr;
-        </p>
+        <a href=<%=  "/products?page=" + ( currentPage - 1) %>  class="page__prev">
+        &larr;
+        </a>
       </li>
     <% } %>
    
@@ -49,9 +49,9 @@
     <% if (currentPage < totalPages ) { %>
      
       <li class="page">
-       <p class="page__next">
+       <a href=<%=  "/products?page=" + (currentPage + 1) %>  class="page__next">
          &rrarr;
-       </p>
+       </a>
      </li>
     <% } %>
  

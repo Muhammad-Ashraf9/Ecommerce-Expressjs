@@ -8,7 +8,7 @@ const PDFDocument = require("pdfkit");
 
 //get
 
-exports.getIndex = (req, res, next) => {
+exports.getIndex = async (req, res, next) => {
   const { page = 1, limit = 2 } = req.query;
   console.log(page, limit);
   try {
@@ -29,7 +29,7 @@ exports.getIndex = (req, res, next) => {
 };
 exports.getProducts = async (req, res, next) => {
   const { page = 1, limit = 2 } = req.query;
-  console.log(page, limit);
+  console.log("page", page);
   try {
     const products = await Product.find({})
       .skip((page - 1) * limit)
@@ -38,7 +38,7 @@ exports.getProducts = async (req, res, next) => {
     res.status(201).render("shop/index", {
       pageTitle: "Main Page",
       products: products,
-      currentPage: page,
+      currentPage: +page, //number
       totalPages: Math.ceil(productsCount / limit),
       path: "/",
     });
