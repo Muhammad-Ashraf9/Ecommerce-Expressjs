@@ -31,6 +31,31 @@
     <li>No products found</li>
     <% } %>
   </ul>
-
+  <ul class="pages-container">
+    <% if (currentPage > 1 ) { %>
+     
+      <li class="page">
+        <p class="page__prev">
+        &lrarr;
+        </p>
+      </li>
+    <% } %>
+   
+    <li class="page">
+      <p class="page__cur">
+        <%= currentPage  %>
+      </p>
+    </li>
+    <% if (currentPage < totalPages ) { %>
+     
+      <li class="page">
+       <p class="page__next">
+         &rrarr;
+       </p>
+     </li>
+    <% } %>
+ 
+   
+  </ul>
 </main>
 <%- include('../partials/footer') %>

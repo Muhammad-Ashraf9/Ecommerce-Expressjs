@@ -1,34 +1,50 @@
+const fs = require("fs");
+const path = require("path");
 const Order = require("../models/order");
 const Product = require("../models/product");
 const User = require("../models/user");
+const { createInvoice } = require("../createInvoice");
+const PDFDocument = require("pdfkit");
 
 //get
 
 exports.getIndex = (req, res, next) => {
-  Product.find({})
-    .then((products) => {
-      res.status(201).render("shop/index", {
-        pageTitle: "Main Page",
-        products: products,
-        path: "/",
-      });
-    })
-    .catch((err) => {
-      next(err);
+  const { page = 1, limit = 2 } = req.query;
+  console.log(page, limit);
+  try {
+    const products = await Product.find({})
+      .skip((page - 1) * limit)
+      .limit(limit * 1); //*1 => string => number
+    const productsCount = await Product.countDocuments({});
+    res.status(201).render("shop/index", {
+      pageTitle: "Main Page",
+      products: products,
+      currentPage: page,
+      totalPages: Math.ceil(productsCount / limit),
+      path: "/",
     });
+  } catch (err) {
+    next(err);
+  }
 };
-exports.getProducts = (req, res, next) => {
-  Product.find({})
-    .then((products) => {
-      res.status(201).render("shop/index", {
-        pageTitle: "Main Page",
-        products: products,
-        path: "/",
-      });
-    })
-    .catch((err) => {
-      next(err);
+exports.getProducts = async (req, res, next) => {
+  const { page = 1, limit = 2 } = req.query;
+  console.log(page, limit);
+  try {
+    const products = await Product.find({})
+      .skip((page - 1) * limit)
+      .limit(limit * 1); //*1 => string => number
+    const productsCount = await Product.countDocuments({});
+    res.status(201).render("shop/index", {
+      pageTitle: "Main Page",
+      products: products,
+      currentPage: page,
+      totalPages: Math.ceil(productsCount / limit),
+      path: "/",
     });
+  } catch (err) {
+    next(err);
+  }
 };
 
 exports.getCart = (req, res, next) => {
@@ -54,6 +70,36 @@ exports.getOrders = (req, res, next) => {
         pageTitle: "orders Page",
         orders: orders,
       });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.getInvoice = (req, res, next) => {
+  const { orderId } = req.params;
+  Order.findOne({ userId: req.user._id, _id: orderId })
+    .populate("userId")
+    .then((order) => {
+      if (!order) res.redirect("/");
+      const doc = new PDFDocument();
+      doc.pipe(res);
+      doc.text(`Invoice`, {
+        width: 410,
+        align: "center",
+      });
+      doc.text(`Order ID: ${order._id}`, {
+        width: 410,
+        align: "left",
+      });
+      order.products.forEach((product) => {
+        doc.text(
+          `product title: ${product.product.title}, product quantity: ${product.quantity}`,
+          100,
+          100,
+          { width: 410, align: "left" }
+        );
+      });
+      doc.end();
     })
     .catch((err) => {
       next(err);

@@ -1,0 +1,28 @@
+.orders-list {
+}
+.order {
+  border-bottom: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+.order__id {
+}
+.order__btn {
+}
+.order__products-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.order__product {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.order__title {
+}
+.order__quantity {
+}

@@ -14,6 +14,7 @@
                 <p><%= product.productId.title %> </p>
                 <span><%= product.quantity %></span>
                 <form action="/cart-delete-item" method="POST">
+                    <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />
                     <input type="hidden" value="<%= product._id %>" name="productId">
                     <button class="delete-button" type="submit">Delete</button>
                 </form>
@@ -21,6 +22,7 @@
         <% }) %>
     </ul>
     <form action="/create-order" class="checkout" method="POST">
+        <input type="hidden" name="CSRFToken" value="<%= CSRFToken%>" />
         <button class="card-button" type="submit">Checkout</button>
     </form>
 <% } else { %>

@@ -18,7 +18,7 @@ exports.getsignup = (req, res, next) => {
   res.status(201).render("auth/signup", {
     pageTitle: "signup",
     path: "signup",
-    message: req.flash("error"),
+    message: "",
     oldData: { email: "", password: "", confirmPassword: "" },
   });
 };

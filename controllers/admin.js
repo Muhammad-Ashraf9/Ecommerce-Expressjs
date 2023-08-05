@@ -1,5 +1,8 @@
+const fs = require("fs");
+
 const Product = require("../models/product");
 const { validationResult, matchedData } = require("express-validator");
+const { deleteFile } = require("../util/deleteFile");
 exports.getAddProduct = (req, res, next) => {
   res.status(201).render("admin/edit-product", {
     pageTitle: "Add Product",
@@ -53,6 +56,9 @@ exports.postAddProduct = (req, res, next) => {
   const image = req.file;
 
   if (!result.isEmpty() || !image) {
+    if (image) {
+      deleteFile(image.path);
+    }
     return res.status(403).render("admin/edit-product", {
       pageTitle: "Add Product",
       path: "/admin/add-product",
@@ -98,8 +104,10 @@ exports.postEditProduct = (req, res, next) => {
 
   Product.findOne({ _id: productId, userId: req.session.user._id })
     .then((product) => {
-      if (imageUrl && product.imageUrl !== imageUrl)
+      if (imageUrl && product.imageUrl !== imageUrl) {
+        deleteFile(product.imageUrl);
         product.imageUrl = imageUrl;
+      }
       product.title = title;
       product.description = description;
       product.price = price;
@@ -111,28 +119,13 @@ exports.postEditProduct = (req, res, next) => {
       next(err);
     });
 };
-// Product.findOneAndUpdate(
-//   { _id: productId, userId: req.session.user._id },
-//   {
-//     title: title,
-//     description: description,
-//     imageUrl: imageUrl,
-//     price: price,
-//   },
-
-//   { new: true }
-// )
-//   .then(() => {
-//     res.redirect("/admin/products");
-//   })
-//   .catch((err) => {
-//     next(err);
-//   });
 
 exports.postDeleteProduct = (req, res, next) => {
   const productId = req.body.productId;
   Product.findOneAndDelete({ _id: productId, userId: req.session.user._id })
-    .then(() => {
+
+    .then((product) => {
+      deleteFile(product.imageUrl);
       res.redirect("/admin/products");
     })
     .catch((err) => {

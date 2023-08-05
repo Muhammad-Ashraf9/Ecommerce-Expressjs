@@ -1,5 +1,6 @@
 <%- include('../partials/head') %> 
 <link rel="stylesheet" href="/css/card.css" />
+<link rel="stylesheet" href="/css/order.css" />
 
 </head>
 <%- include('../partials/navigation') %>
@@ -8,13 +9,19 @@
   <% if (orders.length <= 0) { %>
       <h1>Nothing there!</h1>
   <% } else { %>
-      <ul>
+      <ul class="orders-list">
           <% orders.forEach(order => { %>
-              <li>
-                  <p># <%= order._id %></p>
-                  <ul>
-                      <% order.products.forEach(product => { %>
-                          <li><h1><%= product.title %> (<%= product.quantity %>)</h1></li>
+              <li class="order">
+                  <p class="order__id">Order ID: <%= order._id %></p>
+                  <a href="/invoice/<%= order._id %>" class="btn order__btn">Invoice</a>
+                  <ul class="order__products-list">
+                      <% order.products.forEach(({product,quantity}) => { %>
+                        <li class="order__product">
+                            <h1 class="order__title"><%= product.title %> </h1>
+                            <p class="order__quantity">
+                                  <%=quantity %>
+                            </p>
+                        </li>
                       <% }); %>
                   </ul>
               </li>
