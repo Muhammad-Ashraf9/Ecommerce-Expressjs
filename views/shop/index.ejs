@@ -16,46 +16,42 @@
         </div>
         <div class="card-info">
         <p class="text-title"><%= products[i].title %></p>
-        <p class="text-body"><%= products[i].description.slice(0,50) %></p>
+        <p class="text-body"><%= products[i].description.slice(0,30) %></p>
         <a href="/products/<%=products[i]._id%>">..Read more</a
         </div>
-
-    </div>
-    <div class="card-footer">
+       <div class="card-footer">
       <span class="text-title"><%= products[i].price %> $</span>
       <%- include('../partials/add-to-cart',{product:products[i]}) %>
-
-    </div>
-    </li>
-    <% } %> <% }else{ %>
-    <li>No products found</li>
-    <% } %>
-  </ul>
-  <ul class="pages-container">
-    <% if (currentPage > 1 ) { %>
-     
-      <li class="page">
-        <a href=<%=  "/products?page=" + ( currentPage - 1) %>  class="page__prev">
-        &larr;
-        </a>
+        </div>
+        
+        <% } %> 
       </li>
-    <% } %>
-   
-    <li class="page">
-      <p class="page__cur">
-        <%= currentPage  %>
-      </p>
-    </li>
-    <% if (currentPage < totalPages ) { %>
-     
+    </ul>
+    <ul class="pages-container">
+      <% if (currentPage > 1 ) { %>
+        <li class="page">
+          <a href=<%=  "?page=" + ( currentPage - 1) %>  class="btn page__prev">
+          &larr;
+          </a>
+        </li>
+      <% } %>
       <li class="page">
-       <a href=<%=  "/products?page=" + (currentPage + 1) %>  class="page__next">
-         &rrarr;
-       </a>
-     </li>
+        <p class="page__cur">
+          <%= currentPage  %>
+        </p>
+      </li>
+      <% if (currentPage < totalPages ) { %>    
+        <li class="page">
+         <a href=<%=  "?page=" + (currentPage + 1) %>  class="btn page__next">
+           &rarr;
+         </a>
+       </li>
+      <% } %>   
+    </ul>
+    <% }else{ %>
+    <div>No products found</div>
     <% } %>
  
-   
-  </ul>
+
 </main>
 <%- include('../partials/footer') %>

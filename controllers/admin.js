@@ -120,15 +120,15 @@ exports.postEditProduct = (req, res, next) => {
     });
 };
 
-exports.postDeleteProduct = (req, res, next) => {
-  const productId = req.body.productId;
+exports.deleteProduct = (req, res, next) => {
+  const { productId } = req.params;
+  console.log(productId);
   Product.findOneAndDelete({ _id: productId, userId: req.session.user._id })
-
     .then((product) => {
       deleteFile(product.imageUrl);
-      res.redirect("/admin/products");
+      res.json({ message: "success" });
     })
     .catch((err) => {
-      next(err);
+      res.json({ message: "fail" });
     });
 };

@@ -10,7 +10,6 @@ const PDFDocument = require("pdfkit");
 
 exports.getIndex = async (req, res, next) => {
   const { page = 1, limit = 2 } = req.query;
-  console.log(page, limit);
   try {
     const products = await Product.find({})
       .skip((page - 1) * limit)
@@ -29,7 +28,6 @@ exports.getIndex = async (req, res, next) => {
 };
 exports.getProducts = async (req, res, next) => {
   const { page = 1, limit = 2 } = req.query;
-  console.log("page", page);
   try {
     const products = await Product.find({})
       .skip((page - 1) * limit)

@@ -32,7 +32,10 @@ const fileFilter = (req, file, cb) => {
 
 const { csrfSynchronisedProtection } = csrfSync({
   getTokenFromRequest: (req) => {
+    // if (req.body["CSRFToken"]) return req.body["CSRFToken"];
+    // return req.headers["x-csrf-token"];
     return req.body["CSRFToken"];
+    // return req.body["CSRFToken"] || req.headers["x-csrf-token"];
   },
 });
 
@@ -69,7 +72,7 @@ app.use(flash());
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLogedIn;
-  res.locals.CSRFToken = req.csrfToken();
+  res.locals.CSRFToken = req.csrfToken(true);
   next();
 });
 
