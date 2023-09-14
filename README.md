@@ -1,15 +1,10 @@
 ## Shopifyer
 - Shopifyer is a secure e-commerce platform that allows buyers to purchase and sellers to list & sell products online. Users can browse listings, add to cart, and complete checkout.
 ## Features
-- CRUD
-- Shopping cart
-- Authentication
-- Seller panel to manage products.
-- File Upload & Download
-- Sending emails
-- Pagination
-- Error handling
-- CSRF protection
+- user authentication, shopping cart, and checkout functionality.
+- seller account panel to manage products including image upload/download.
+- email capabilities for password resetting.
+- pagination, input validation, error handling, and CSRF protection.
 ## Technologies
  - "ejs": "^3.1.9"
   - "express": "^4.18.2"
