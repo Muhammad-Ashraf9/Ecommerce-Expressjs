@@ -1,5 +1,5 @@
 ## Shopifyer
--Shopifyer is a secure e-commerce platform that allows buyers to purchase and sellers to list & sell products online. Users can browse listings, add to cart, and complete checkout.
+- Shopifyer is a secure e-commerce platform that allows buyers to purchase and sellers to list & sell products online. Users can browse listings, add to cart, and complete checkout.
 ## Features
 - CRUD
 - Shopping cart
