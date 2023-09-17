@@ -43,7 +43,7 @@ router.post(
   isAuth,
   postEditProduct
 );
-
+// need to change to delete instead of get
 router.get("/product/:productId", isAuth, deleteProduct);
 
 module.exports = router;

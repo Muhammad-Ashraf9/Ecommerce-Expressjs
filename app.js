@@ -62,7 +62,7 @@ app.use(
     saveUninitialized: false,
     cookie: { maxAge: 36000000 },
     store: MongoStore.create({
-      mongoUrl: process.env.CONNECTION_URL_LOCAL,
+      mongoUrl: process.env.CONNECTION_URL,
       collectionName: "sessions",
     }),
   })
@@ -103,7 +103,7 @@ app.use(get404);
 app.use(get500);
 
 mongoose
-  .connect(process.env.CONNECTION_URL_LOCAL)
+  .connect(process.env.CONNECTION_URL)
   .then(() => {
     app.listen(3000, () => {
       console.log("server on 3000");
