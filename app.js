@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs");
+const https = require("https");
 
 const express = require("express");
 const bodyparser = require("body-parser");
@@ -13,7 +14,11 @@ const helmet = require("helmet");
 const compression = require("compression");
 const morgan = require("morgan");
 
-const port = process.env.Port || 3000;
+const port = process.env.PORT || 3000;
+
+const privateKey = fs.readFileSync("server.key");
+const certificate = fs.readFileSync("server.cert");
+
 const accessLogStream = fs.createWriteStream(
   path.join(__dirname, "access.log"),
   { flags: "a" }
@@ -51,9 +56,10 @@ const { csrfSynchronisedProtection } = csrfSync({
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const authRoutes = require("./routes/auth");
+
 const { get404, get500 } = require("./controllers/error");
+
 const User = require("./models/user");
-const { fstat } = require("fs");
 
 require("dotenv").config();
 
@@ -72,7 +78,7 @@ app.use(
     saveUninitialized: false,
     cookie: { maxAge: 36000000 },
     store: MongoStore.create({
-      mongoUrl: process.env.CONNECTION_URL,
+      mongoUrl: process.env.MONGODB_URL,
       collectionName: "sessions",
     }),
   })
@@ -116,11 +122,16 @@ app.use(get404);
 app.use(get500);
 
 mongoose
-  .connect(process.env.CONNECTION_URL)
+  .connect(process.env.MONGODB_URL)
   .then(() => {
-    app.listen(3000, () => {
-      console.log("server on 3000");
-    });
+    https
+      .createServer({ key: privateKey, cert: certificate }, app)
+      .listen(port, () => {
+        console.log("server on 3000");
+      });
+    // app.listen(port, () => {
+    //   console.log("server on 3000");
+    // });
   })
   .catch((err) => {
     next(err);
