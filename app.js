@@ -8,6 +8,9 @@ const MongoStore = require("connect-mongo");
 const flash = require("connect-flash");
 const { csrfSync } = require("csrf-sync");
 const multer = require("multer");
+const helmet = require("helmet");
+
+const port = process.env.Port || 3000;
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -69,6 +72,7 @@ app.use(
 );
 app.use(csrfSynchronisedProtection);
 app.use(flash());
+app.use(helmet());
 
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLogedIn;
